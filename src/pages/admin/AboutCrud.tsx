@@ -7,57 +7,52 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Save } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getAboutContent, AboutContent } from '@/lib/data/about';
 
 const AboutCrud = () => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [aboutContent, setAboutContent] = useState<{id: string | null; title: string; description: string; image_url: string}>({
-    id: null,
+  const queryClient = useQueryClient();
+
+  const { data: fetchedAboutContent, isLoading, isError } = useQuery<AboutContent | null>({
+    queryKey: ['about_content'],
+    queryFn: getAboutContent,
+  });
+
+  const [aboutContent, setAboutContent] = useState<AboutContent>({
+    id: '',
     title: '',
     description: '',
-    image_url: ''
+    image_url: null,
   });
-  const [initialLoading, setInitialLoading] = useState(true);
-
-  const fetchAboutContent = async () => {
-    try {
-      const { data, error } = await supabase.from('about_content').select('*').single();
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
-        throw error;
-      }
-      if (data) {
-        setAboutContent(data);
-      }
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to fetch about content.', variant: 'destructive' });
-      console.error('Error fetching about content:', error);
-    } finally {
-      setInitialLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchAboutContent();
-  }, []);
+    if (fetchedAboutContent) {
+      setAboutContent(fetchedAboutContent);
+    }
+  }, [fetchedAboutContent]);
 
   const saveAboutContent = async () => {
-    setLoading(true);
-    try {
-      const { id, ...rest } = aboutContent;
-      const dataToSave = id ? { ...rest, id } : rest;
-      const { error } = await supabase.from('about_content').upsert(dataToSave);
-      if (error) throw error;
-      toast({ title: 'Success', description: 'About content updated successfully' });
-      fetchAboutContent();
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to update about content', variant: 'destructive' });
-    } finally {
-      setLoading(false);
+    // The data to upsert, removing null id for insert operations
+    const { id, ...contentToSave } = aboutContent;
+    const upsertData = id ? aboutContent : contentToSave;
+
+    const { error } = await supabase.from('about_content').upsert(upsertData as any); // Cast to any for now, will fix types later
+
+    if (error) {
+      toast({ title: 'Error saving about content', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Success!', description: 'About content has been saved.' });
+      queryClient.invalidateQueries({ queryKey: ['about_content'] }); // Invalidate and refetch
     }
   };
 
-  if (initialLoading) {
-      return <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div></div>;
+  if (isLoading) {
+    return <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div></div>;
+  }
+
+  if (isError || !fetchedAboutContent) {
+    return <div className="flex items-center justify-center p-8 text-red-500">Error loading about content or no content found.</div>;
   }
 
   return (
@@ -77,9 +72,9 @@ const AboutCrud = () => {
         </div>
         <div>
           <Label htmlFor="about-image">Image URL</Label>
-          <Input id="about-image" value={aboutContent.image_url} onChange={(e) => setAboutContent({ ...aboutContent, image_url: e.target.value })} className="glass-card" />
+          <Input id="about-image" value={aboutContent.image_url || ''} onChange={(e) => setAboutContent({ ...aboutContent, image_url: e.target.value })} className="glass-card" />
         </div>
-        <Button onClick={saveAboutContent} disabled={loading} className="btn-primary-glass"><Save className="w-4 h-4 mr-2" />Save About Content</Button>
+        <Button onClick={saveAboutContent} disabled={isLoading} className="btn-primary-glass"><Save className="w-4 h-4 mr-2" />Save About Content</Button>
       </CardContent>
     </Card>
   );

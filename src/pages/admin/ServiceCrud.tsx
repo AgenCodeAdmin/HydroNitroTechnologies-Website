@@ -55,7 +55,7 @@ const ServiceCrud = () => {
       const { data, error } = await supabase.from('services').select('*').order('order_index');
       if (error) throw new Error(error.message);
       return data || [];
-    }}
+    }, staleTime: 5 * 60 * 1000 } // Keep data fresh for 5 minutes
   );
 
   const form = useForm<ServiceFormValues>({

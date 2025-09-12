@@ -7,12 +7,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Save } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getHeroContent } from '@/lib/data/hero';
+import { HeroContent } from '@/components/HeroSection'; // Assuming HeroContent interface is exported
 
 const HeroCrud = () => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [heroContent, setHeroContent] = useState({
-    id: null as number | null,
+  const queryClient = useQueryClient();
+
+  const { data: fetchedHeroContent, isLoading, isError } = useQuery<HeroContent | null>({
+    queryKey: ['hero_content'],
+    queryFn: getHeroContent,
+  });
+
+  const [heroContent, setHeroContent] = useState<HeroContent>({
     headline: '',
     subheadline: '',
     background_image_url: '',
@@ -20,37 +28,25 @@ const HeroCrud = () => {
     cta_link: ''
   });
 
-  const fetchHeroContent = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('hero_content').select('*').limit(1).single();
-    
-    if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found, which is fine for initial setup
-      toast({ title: 'Error fetching hero content', description: error.message, variant: 'destructive' });
-    } else if (data) {
-      setHeroContent(data);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchHeroContent();
-  }, []);
+    if (fetchedHeroContent) {
+      setHeroContent(fetchedHeroContent);
+    }
+  }, [fetchedHeroContent]);
 
   const saveHeroContent = async () => {
-    setLoading(true);
     // The data to upsert, removing null id for insert operations
     const { id, ...contentToSave } = heroContent;
     const upsertData = id ? heroContent : contentToSave;
 
-    const { error } = await supabase.from('hero_content').upsert(upsertData);
+    const { error } = await supabase.from('hero_content').upsert(upsertData as any); // Cast to any for now, will fix types later
 
     if (error) {
       toast({ title: 'Error saving hero content', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Success!', description: 'Hero content has been saved.' });
-      fetchHeroContent(); // Refetch to get the latest data, including the new ID if it was an insert
+      queryClient.invalidateQueries({ queryKey: ['hero_content'] }); // Invalidate and refetch
     }
-    setLoading(false);
   };
 
   return (
@@ -109,7 +105,7 @@ const HeroCrud = () => {
             className="glass-card"
           />
         </div>
-        <Button onClick={saveHeroContent} disabled={loading} className="btn-primary-glass">
+        <Button onClick={saveHeroContent} disabled={isLoading} className="btn-primary-glass">
           <Save className="w-4 h-4 mr-2" />
           Save Hero Content
         </Button>
