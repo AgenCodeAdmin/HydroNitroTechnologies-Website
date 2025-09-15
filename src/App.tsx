@@ -13,6 +13,7 @@ import {
   Route,
 } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import FloatingContactButton from "./components/FloatingContactButton";
 import LandingPage from "./pages/LandingPage";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <FloatingContactButton />
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<LandingPage />} />

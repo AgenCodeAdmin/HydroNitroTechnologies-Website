@@ -85,7 +85,7 @@ const ServicesSection = () => {
           {services.map((service, index) => (
             <div
               key={service.id}
-              className="glass-card-hover p-6 group lg:basis-[42%]"
+              className="glass-card-hover p-6 group w-full md:basis-[45%] lg:basis-[42%]"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <div className="mb-6">

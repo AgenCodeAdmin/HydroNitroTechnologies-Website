@@ -7,6 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 interface Faq {
   id: number;
@@ -28,10 +30,11 @@ const fetchFaqs = async (): Promise<Faq[]> => {
 };
 
 const FaqSection = () => {
-  const { data: faqs, isLoading, isError } = useQuery<Faq[]> ({
+  const { data: faqs, isLoading, isError } = useQuery<Faq[]>({
     queryKey: ["faqs"],
     queryFn: fetchFaqs,
   });
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
 
   if (isLoading) {
     return (
@@ -39,7 +42,7 @@ const FaqSection = () => {
         <div className="container mx-auto px-4">
           <Skeleton className="h-10 w-1/3 mx-auto mb-12" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(4)].map((_, i) => (
               <Skeleton key={i} className="h-24 w-full rounded-lg" />
             ))}
           </div>
@@ -58,19 +61,25 @@ const FaqSection = () => {
     );
   }
 
+  const visibleFaqs = showAllFaqs ? faqs : faqs?.slice(0, 4);
+
   return (
     <section className="py-12 bg-white" id="faq">
       <div className="container mx-auto px-4">
-        <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">Frequently Asked Questions</h2>
-        <div className="w-24 h-1 bg-blue-500 mx-auto mb-12 rounded-full"></div> {/* Blue underline */}
+        <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">
+          Frequently Asked Questions
+        </h2>
+        <div className="w-24 h-1 bg-blue-500 mx-auto mb-12 rounded-full"></div>
         <div className="md:columns-2 md:gap-6">
           <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq) => (
-              <AccordionItem value={`item-${faq.id}`} key={faq.id} className="faq-item-avoid-break">
+            {visibleFaqs?.map((faq) => (
+              <AccordionItem
+                value={`item-${faq.id}`}
+                key={faq.id}
+                className="faq-item-avoid-break"
+              >
                 <AccordionTrigger className="bg-gray-50 hover:bg-gray-100 rounded-lg px-6 py-4 text-lg font-semibold text-gray-800 transition-colors duration-200 flex justify-between items-center">
-                  <span className="flex items-center">
-                    {faq.question}
-                  </span>
+                  <span className="flex items-center">{faq.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="bg-gray-50 rounded-b-lg px-6 py-4 text-gray-600 leading-relaxed border-t border-gray-200">
                   {faq.answer}
@@ -79,6 +88,26 @@ const FaqSection = () => {
             ))}
           </Accordion>
         </div>
+        {!showAllFaqs && faqs && faqs.length > 4 && (
+          <div className="text-center mt-8">
+            <Button
+              onClick={() => setShowAllFaqs(true)}
+              className="shiny-text"
+            >
+              More FAQ's
+            </Button>
+          </div>
+        )}
+        {showAllFaqs && (
+          <div className="text-center mt-8">
+            <Button
+              onClick={() => setShowAllFaqs(false)}
+              className="shiny-text"
+            >
+              Show Less
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

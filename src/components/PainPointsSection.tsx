@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as LucideIcons from "lucide-react"; // Import all icons from lucide-react
+import PainPointsCarousel from "./PainPointsCarousel";
 
 interface PainPoint {
   id: number;
@@ -55,17 +54,11 @@ const PainPointsSection = () => {
     );
   }
 
-  // Function to get Lucide icon component by name
-  const getIconComponent = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName];
-    return IconComponent ? <IconComponent className="h-14 w-28 text-primary mb-2" /> : null;
-  };
-
   return (
     <section className="bg-white py-10">
       <div className="container mx-auto px-4">
         <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">Common Business Challenges</h2>
-        <div className="w-24 h-1 bg-blue-500 mx-auto mb-12 rounded-full"></div> {/* Blue underline */}
+        <div className="w-24 h-1 bg-blue-500 mx-auto mb-12 rounded-full"></div>
         <style>
           {`
             @keyframes rotate {
@@ -91,20 +84,12 @@ const PainPointsSection = () => {
             }
           `}
         </style>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {painPoints.map((pp) => (
-            <Card key={pp.id} className="animated-border-box flex flex-col items-center text-center">
-              {getIconComponent(pp.icon)}
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold mb-2">{pp.title}</CardTitle>
-                <CardDescription className="text-gray-600">{pp.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
+        {painPoints && <PainPointsCarousel painPoints={painPoints} />}
       </div>
     </section>
   );
 };
 
 export default PainPointsSection;
+
+
