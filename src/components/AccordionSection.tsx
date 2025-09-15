@@ -65,7 +65,7 @@ const AccordionSection = () => {
   return (
     <section id="accordion" className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">Our Approach</h2>
+        <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">Why Choose Us</h2>
         <div className="w-24 h-1 bg-blue-500 mx-auto mb-12 rounded-full"></div>
 
         <div className="border rounded-xl p-4 sm:p-6 md:p-8">
@@ -104,7 +104,7 @@ const AccordionSection = () => {
                 {activeImage ? (
                   <img 
                     src={activeImage}
-                    alt="Our Approach"
+                    alt="Why Choose Us"  // Prevoius "Our Approach"
                     className="w-full h-full object-contain rounded-xl shadow-lg image-zoom-hover"
                     loading="lazy"
                     decoding="async"

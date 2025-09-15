@@ -51,7 +51,7 @@ const PainPointsCarousel: React.FC<PainPointsCarouselProps> = ({ painPoints }) =
             <div className="embla__slide" key={index}>
               <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-4`}>
                 {group.map((pp) => (
-                  <Card key={pp.id} className="animated-border-box flex flex-col items-center text-center h-full w-full">
+                  <Card key={pp.id} className="animated-border-box flex flex-col items-center text-center h-full w-full pt-6">
                     {getIconComponent(pp.icon)}
                     <CardHeader>
                       <CardTitle className="text-xl font-semibold mb-2">{pp.title}</CardTitle>

@@ -1,14 +1,19 @@
 .embla {
   overflow: hidden;
-  width: 100%;
+  width: 90%;
+  margin: auto;
 }
 .embla__container {
   display: flex;
   gap: 1rem;
 }
 .embla__slide {
-  flex: 0 0 100%;
+  flex: 0 0 80%;
   min-width: 0;
+}
+
+.embla__slide .animated-border-box {
+  height: 210px; /* Adjust as needed */
 }
 
 .embla__prev,
@@ -32,6 +37,9 @@
 }
 
 @media (max-width: 768px) {
+  .embla {
+    width: 100%;
+  }
   .embla__slide {
     flex: 0 0 100%;
   }

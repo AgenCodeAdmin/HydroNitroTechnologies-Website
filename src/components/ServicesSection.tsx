@@ -79,7 +79,7 @@ const ServicesSection = () => {
         `}
       </style>
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">Our Services</h2>
+        <h2 className="text-5xl font-bold text-gray-900 text-center mb-4">What We Offer</h2>
         <div className="w-24 h-1 bg-blue-500 mx-auto mb-12 rounded-full"></div> {/* Blue underline */}
         <div className="flex flex-wrap justify-center gap-8">
           {services.map((service, index) => (

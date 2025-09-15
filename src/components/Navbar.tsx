@@ -23,12 +23,12 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { label: 'Home', id: 'home' },
-    { label: 'About', id: 'about' },
-    { label: 'Services', id: 'services' },
+    // { label: 'Home', id: 'home' },
+    // { label: 'About', id: 'about' },
+    { label: 'What We Offer', id: 'services' },
     { label: 'Why Choose Us', id: 'accordion' },
-    { label: 'Pricing', id: 'pricing' },
-    { label: 'Contact Us', id: 'contact-us' },
+    // { label: 'Pricing', id: 'pricing' },
+    { label: 'Get In Touch', id: 'contact-us' },
   ];
 
   // Add Admin Dashboard link if user is admin or editor
