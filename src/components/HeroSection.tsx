@@ -1,47 +1,18 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import parse from 'html-react-parser';
-import { Button } from '@/components/ui/button';
-import LightRays from '@/components/ui/light-rays';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { getHeroContent } from '@/lib/data/hero';
+import { Button } from "@/components/ui/button";
+import LightRays from "@/components/ui/light-rays";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-export interface HeroContent {
-  headline: string;
-  subheadline: string;
-  background_image_url: string;
-  cta_text: string;
-  cta_link: string;
-}
+const staticContent = {
+  headline: "Transform Your Business with AI-Powered Digital Solutions",
+  subheadline: "We collaborate with Businesses to attract customers, streamline operations, and build tools that scale.",
+  cta_text: "Get a Strategy Call",
+  cta_link: "https://wa.me/917019573096?text=Hello%20we%20run%20a%20business%20and%20we%20are%20interested%20in%20the%20digital%20service%20offered%20by%20Hydro%20Nitro%20.%20We%20would%20like%20to%20get%20a%20Strategy%20Call"
+};
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
-  const { data: heroContent, isLoading, isError } = useQuery<HeroContent | null>({
-    queryKey: ['hero_content'],
-    queryFn: getHeroContent,
-  });
-
-  if (isLoading) {
-    return (
-      <section id="home" className="min-h-screen flex items-center justify-center">
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isError || !heroContent) {
-    return (
-      <section id="home" className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center text-gray-600">
-          <p>No Hero content found or an error occurred. Please add content from the Admin Dashboard.</p>
-        </div>
-      </section>
-    );
-  }
-
-  const content = heroContent;
+  const content = staticContent;
 
   return (
     <section 
@@ -68,11 +39,11 @@ const HeroSection = () => {
           <h1 className="text-3xl md:text-6xl font-bold text-white mb-8 leading-tight bounce-animation max-w-full break-words">
             {content.headline}
           </h1>
-          <div className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 mx-auto rise-animation break-word px-4 tiptap-content">
-            {parse(content.subheadline)}
+          <div className="text-lg sm:text-xl md:text-2xl font-sans text-white/90 mb-8 mx-auto rise-Tanimation break-word px-4 tiptap-content">
+            {content.subheadline}
           </div>
           <a href={content.cta_link} target="_blank" rel="noopener noreferrer">
-            <Button className="glow-on-hover text-black text-lg px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+            <Button className="glow-on-hover bg-blue-600 text-black text-lg px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
               {content.cta_text}
             </Button>
           </a>

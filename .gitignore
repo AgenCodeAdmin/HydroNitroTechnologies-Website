@@ -22,5 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-GEMINI.md
+
+# Firebase (deprecated — migrated to Cloudflare Pages)
+.firebase/
+.firebaserc
+firebase.json
+
+# Reference assets (not for production)
 Reference_Txt_Img/

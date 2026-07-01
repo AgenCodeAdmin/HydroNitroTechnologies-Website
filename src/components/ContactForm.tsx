@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
+// IMPORTANT: Replace this with your deployed Google Apps Script Web App URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdW8YzXWaj5eoAGcuAVeYS3-EayACRRxZZAhqp2suAVeYCHft5IV6p6U4-Ag2mEHmd/exec";
 import {
   Form,
   FormControl,
@@ -48,22 +50,20 @@ const ContactForm: React.FC = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     
-    const { error } = await supabase.rpc('handle_contact_form', {
-      p_full_name: values.full_name,
-      p_email: values.email,
-      p_phone_number: values.phone_number,
-      p_business_name: values.business_name,
-      p_message: values.message,
-    });
-
-    if (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to submit your request. Please try again.',
-        variant: 'destructive',
+    try {
+      const formData = new URLSearchParams();
+      formData.append('name', values.full_name);
+      formData.append('email', values.email);
+      formData.append('phone', values.phone_number);
+      formData.append('company', values.business_name);
+      formData.append('message', values.message || '');
+      
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors',
       });
-      console.error('Submission error:', error);
-    } else {
+
       setIsSubmitted(true);
       form.reset({
         full_name: '',
@@ -76,8 +76,16 @@ const ContactForm: React.FC = () => {
         title: 'Success',
         description: 'Your request has been submitted!',
       });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to submit your request. Please try again.',
+        variant: 'destructive',
+      });
+      console.error('Submission error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   if (isSubmitted) {
@@ -109,7 +117,7 @@ const ContactForm: React.FC = () => {
                 <FormItem>
                   <FormLabel className="text-gray-700 text-base">Your Full Name *</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} className="h-12 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-base" />
+                    <Input placeholder="Mukesh" {...field} className="h-12 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-base" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,7 +130,7 @@ const ContactForm: React.FC = () => {
                 <FormItem>
                   <FormLabel className="text-gray-700 text-base">Your Company *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Acme Corp" {...field} className="h-12 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-base" />
+                    <Input placeholder="My Corp" {...field} className="h-12 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-base" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

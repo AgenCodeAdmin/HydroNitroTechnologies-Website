@@ -16,6 +16,16 @@ import { lazy, Suspense } from "react";
 import FloatingContactButton from "./components/FloatingContactButton";
 import LandingPage from "./pages/LandingPage";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
+import WocPlansPage from "./pages/WocPlansPage";
+import SilverWocPage from "./pages/SilverWocPage";
+import GoldWocPage from "./pages/GoldWocPage";
+import DiamondWocPage from "./pages/DiamondWocPage";
+import AboutPage from "./pages/AboutPage";
+import CustomDevelopmentPage from "./pages/CustomDevelopmentPage";
+import DigitalMediaPage from "./pages/DigitalMediaPage";
+import AutomationPage from "./pages/AutomationPage";
+import BlogIndexPage from "./pages/BlogIndexPage";
+import BlogPostPage from "./pages/BlogPostPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 
@@ -39,6 +49,16 @@ const App = () => (
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/woc-plans" element={<WocPlansPage />} />
+            <Route path="/woc/silver" element={<SilverWocPage />} />
+            <Route path="/woc/gold" element={<GoldWocPage />} />
+            <Route path="/woc/diamond" element={<DiamondWocPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/custom-development" element={<CustomDevelopmentPage />} />
+            <Route path="/digital-media" element={<DigitalMediaPage />} />
+            <Route path="/automation" element={<AutomationPage />} />
+            <Route path="/blog" element={<BlogIndexPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/service/:slug" element={<ServiceDetailPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route element={<ProtectedRoute requiredRoles={['admin']} />}>

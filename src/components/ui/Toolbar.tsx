@@ -12,6 +12,17 @@ import {
   Undo,
   Redo,
   Code,
+  Type,
+  Palette,
+  Image as ImageIcon,
+  Youtube as YoutubeIcon,
+  Link as LinkIcon,
+  Table as TableIcon,
+  Minus,
+  Highlighter,
+  Subscript as SubscriptIcon,
+  Superscript as SuperscriptIcon,
+  SquareCheck,
 } from "lucide-react";
 
 type Props = {
@@ -23,6 +34,43 @@ const Toolbar = ({ editor, content }: Props) => {
   if (!editor) {
     return null;
   }
+
+  const addImage = () => {
+    const url = window.prompt('URL');
+
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run();
+    }
+  };
+
+  const addYoutubeVideo = () => {
+    const url = prompt('Enter YouTube URL');
+
+    if (url) {
+      editor.commands.setYoutubeVideo({ src: url });
+    }
+  };
+
+  const setLink = () => {
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('URL', previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+
+      return;
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  };
+
   return (
     <div
       className="px-4 py-3 rounded-tl-md rounded-tr-md flex justify-between items-start
@@ -84,6 +132,72 @@ const Toolbar = ({ editor, content }: Props) => {
         <button
           onClick={(e) => {
             e.preventDefault();
+            editor.chain().focus().toggleCode().run();
+          }}
+          className={
+            editor.isActive("code")
+              ? "bg-sky-700 text-white p-2 rounded-lg"
+              : "text-sky-400"
+          }
+        >
+          <Code className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleHighlight().run();
+          }}
+          className={
+            editor.isActive("highlight")
+              ? "bg-sky-700 text-white p-2 rounded-lg"
+              : "text-sky-400"
+          }
+        >
+          <Highlighter className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleSubscript().run();
+          }}
+          className={
+            editor.isActive("subscript")
+              ? "bg-sky-700 text-white p-2 rounded-lg"
+              : "text-sky-400"
+          }
+        >
+          <SubscriptIcon className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleSuperscript().run();
+          }}
+          className={
+            editor.isActive("superscript")
+              ? "bg-sky-700 text-white p-2 rounded-lg"
+              : "text-sky-400"
+          }
+        >
+          <SuperscriptIcon className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleHeading({ level: 1 }).run();
+          }}
+          className={
+            editor.isActive("heading", { level: 1 })
+              ? "bg-sky-700 text-white p-2 rounded-lg"
+              : "text-sky-400"
+          }
+        >
+          <Type className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 2 }).run();
           }}
           className={
@@ -93,6 +207,35 @@ const Toolbar = ({ editor, content }: Props) => {
           }
         >
           <Heading2 className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleHeading({ level: 3 }).run();
+          }}
+          className={
+            editor.isActive("heading", { level: 3 })
+              ? "bg-sky-700 text-white p-2 rounded-lg"
+              : "text-sky-400"
+          }
+        >
+          <Heading2 className="w-5 h-5" />
+        </button>
+
+        <input
+          type="color"
+          onInput={(event) => editor.chain().focus().setColor((event.target as HTMLInputElement).value).run()}
+          value={editor.getAttributes('textStyle').color}
+          className="w-8 h-8 cursor-pointer"
+        />
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().unsetColor().run();
+          }}
+          className="text-sky-400"
+        >
+          <Palette className="w-5 h-5" />
         </button>
 
         <button
@@ -137,16 +280,63 @@ const Toolbar = ({ editor, content }: Props) => {
         <button
           onClick={(e) => {
             e.preventDefault();
-            editor.chain().focus().setCode().run();
+            editor.chain().focus().setHorizontalRule().run();
+          }}
+          className="text-sky-400"
+        >
+          <Minus className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+          }}
+          className="text-sky-400"
+        >
+          <TableIcon className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleTaskList().run();
           }}
           className={
-            editor.isActive("code")
-              ? "bg-sky-700 text-white p-2 rounded-lg"
-              : "text-sky-400"
+            editor.isActive('taskList') ? 'bg-sky-700 text-white p-2 rounded-lg' : 'text-sky-400'
           }
         >
-          <Code className="w-5 h-5" />
+          <SquareCheck className="w-5 h-5" />
         </button>
+
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            addImage();
+          }}
+          className="text-sky-400"
+        >
+          <ImageIcon className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            addYoutubeVideo();
+          }}
+          className="text-sky-400"
+        >
+          <YoutubeIcon className="w-5 h-5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setLink();
+          }}
+          className={
+            editor.isActive('link') ? 'bg-sky-700 text-white p-2 rounded-lg' : 'text-sky-400'
+          }
+        >
+          <LinkIcon className="w-5 h-5" />
+        </button>
+
         <button
           onClick={(e) => {
             e.preventDefault();

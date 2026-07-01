@@ -1,53 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const fetchLogos = async () => {
-  const { data, error } = await supabase
-    .from("logo_carousel")
-    .select("*")
-    .order("order_index", { ascending: true });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
-};
+import React from 'react';
 
 const LogoCarouselSection = () => {
-  const { data: logos, isLoading, isError } = useQuery({
-    queryKey: ["logos"],
-    queryFn: fetchLogos,
-  });
-
-  if (isLoading) {
-    return (
-      <section className="py-12">
-        <div className="container mx-auto">
-          <Skeleton className="h-12 w-1/2 mx-auto mb-8" />
-          <div className="flex overflow-hidden space-x-16">
-            <div className="flex space-x-16">
-              {[...Array(10)].map((_, i) => (
-                <Skeleton key={i} className="h-20 w-40" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isError) {
-    return (
-      <section className="py-12">
-        <div className="container mx-auto text-center">
-          <p className="text-red-500">Failed to load logos.</p>
-        </div>
-      </section>
-    );
-  }
-
-  const duplicatedLogos = logos ? Array(5).fill([...logos]).flat() : [];
+  const duplicatedLogos: any[] = [];
 
   return (
     <>
